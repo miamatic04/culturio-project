@@ -1,0 +1,14 @@
+﻿namespace Span.Culturio.Api.DTOs.Subscriptions
+{
+    public class SubscriptionResponseDto
+    {
+        public int Id { get; set; }
+        public int UserId { get; set; }
+        public int PackageId { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public DateTime? ActiveFrom { get; set; }
+        public DateTime? ActiveTo { get; set; }
+        public string State { get; set; } = string.Empty;
+        public int RecordedVisits { get; set; }
+    }
+}
