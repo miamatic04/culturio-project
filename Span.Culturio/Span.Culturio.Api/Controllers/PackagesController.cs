@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Span.Culturio.Api.Data;
 using Span.Culturio.Api.DTOs.Packages;
@@ -7,6 +8,7 @@ namespace Span.Culturio.Api.Controllers
 {
     [ApiController]
     [Route("packages")]
+    [Authorize]
     public class PackagesController : ControllerBase
     {
         private readonly CulturioDbContext _context;

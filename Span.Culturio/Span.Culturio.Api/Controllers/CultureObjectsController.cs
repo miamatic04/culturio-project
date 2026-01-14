@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Span.Culturio.Api.Data;
 using Span.Culturio.Api.DTOs.CultureObjects;
@@ -8,6 +9,7 @@ namespace Span.Culturio.Api.Controllers
 {
     [ApiController]
     [Route("culture-objects")]
+    [Authorize]
     public class CultureObjectsController : ControllerBase
     {
         private readonly CulturioDbContext _context;

@@ -1,71 +1,134 @@
 # Span.Culturio
 
-Monolithic application for managing cultural institutions, subscription pages, and user visits.
+Culturio platform for managing cultural institutions, users, subscriptions, and visits.
 
 ## Overview
 
-This repository contains the implementation of Task 1 for the course project _ARDPSPM (Span @ FER)_.
-The goal of Task 1 is to build the initial version of the **Culturio platform** as a **monolithic .NET application** that exposes a REST API for cultural institutions, users, packages, and subscriptions.
+This repository contains the implementations of **Task 1** and **Task 2** for the course  
+**Agilni razvoj digitalnih platformi s pomoću mikroservisa (ARDPSPM)**  
+(Span @ FER).
 
-Future tasks will expand the functionality; this README will be updated as each new task is delivered.
+The project is developed incrementally through course assignments:
 
-## Scope of Task 1
+- **Task 1** focuses on building a **monolithic .NET REST API**
+- **Task 2** refactors the monolith into a **microservice-based architecture**
 
-Task 1 includes the following requirements:
+Both implementations are intentionally kept in this repository for reference, comparison, and further development.
 
-1. Create a new solution named **Span.Culturio**.
+## Repository Structure
+culturio-project/
 
-2. Create a project **Span.Culturio.Api** inside the solution.
+├── Span.Culturio -> Task 1 – Monolithic application
 
-3. Create a SQL database named **Span.Culturio**.
+└── Span.Culturio.Microservices -> Task 2 – Microservice architecture
 
-4. Implement REST API methods exactly as defined in the provided OpenAPI file.
 
-5. Connect all implemented endpoints to the database for data retrieval and persistence.
+## Task 1 – Monolithic Application
 
-6. Implement ```/auth/register``` and ```/auth/login``` as placeholder endpoints returning ```200 OK```.
+### Assignment Description
 
-7. Deliver the solution through a publicly accessible **Azure DevOps repository**.
+The goal of Task 1 is to implement a platform in the form of a **monolithic application** that connects:
 
-## API Summary
+- cultural institutions offering visits, and
+- users who purchase monthly subscriptions to access these institutions at reduced prices.
 
-The API follows the specification provided in the OpenAPI file and includes:
+### Implemented Requirements
 
-### Auth
+- Created a solution named **Span.Culturio**
+- Created an API project **Span.Culturio.Api**
+- Created a SQL database named **Span.Culturio**
+- Implemented REST API methods according to the provided OpenAPI (Swagger) specification
+- Connected all endpoints to the database for data persistence and retrieval
+- Implemented `/auth/login` and `/auth/register` as placeholder endpoints returning `200 OK`
 
-- ```POST /auth/register``` — Placeholder for user registration.
+### API Summary (Task 1)
 
-- ```POST /auth/login``` — Placeholder for user login.
+**Auth**
+- `POST /auth/register` — Placeholder endpoint
+- `POST /auth/login` — Placeholder endpoint
 
-### Users
+**Users**
+- `GET /users`
+- `GET /users/{id}`
 
-- ```GET /users``` — Paginated user listing.
+**Culture Objects**
+- `POST /culture-objects`
+- `GET /culture-objects`
+- `GET /culture-objects/{id}`
 
-- ```GET /users/{id}``` — Retrieve a single user.
+**Subscriptions**
+- `POST /subscriptions`
+- `GET /subscriptions`
+- `POST /subscriptions/activate`
+- `POST /subscriptions/track-visit`
 
-### Culture Objects
+**Packages**
+- `GET /packages`
 
-- ```POST /culture-objects``` — Create a cultural institution.
 
-- ```GET /culture-objects``` — Retrieve all institutions.
+## Task 2 – Microservice Architecture
 
-- ```GET /culture-objects/{id}``` — Retrieve details by ID.
+### Assignment Description
 
-### Subscriptions
+The goal of Task 2 is to refactor the monolithic application from Task 1 into a **microservice-based system**.
 
-- ```POST /subscriptions``` — Create a subscription.
+Each microservice represents a separate domain, includes cross-cutting concerns, and is connected to its own database.
 
-- ```GET /subscriptions``` — List subscriptions (supports optional userId).
+### Implemented Requirements
 
-- ```POST /subscriptions/track-visit``` — Record a visit.
+- Created a new solution: **Span.Culturio.Microservices**
+- Split the monolithic application into independent services
+- Implemented:
+  - authentication and authorization,
+  - user role validation,
+  - input validation,
+  - logging
+- Created separate databases and connected them to the appropriate services
+- Reused and reorganized the code from Task 1 into multiple projects
 
-- ```POST /subscriptions/activate``` — Activate a subscription.
+### Implemented Services
 
-### Packages
+- **Span.Culturio.Auth**
+- **Span.Culturio.Users**
+- **Span.Culturio.CultureObjects**
+- **Span.Culturio.Subscriptions**
+- **Span.Culturio.Packages**
 
-- ```GET /packages``` — Retrieve subscription packages.
+### Databases
+
+| Service            | Database                |
+|--------------------|-------------------------|
+| Auth, Users        | Culturio.Users          |
+| CultureObjects     | Culturio.CultureObjects |
+| Subscriptions      | Culturio.Subscriptions  |
+| Packages           | Culturio.Packages       |
+
+### API Summary (Task 2)
+
+The API remains aligned with the OpenAPI specification from Task 1 but is distributed across multiple services.
+
+**Auth Service**
+- `POST /auth/register`
+- `POST /auth/login`
+
+**Users Service**
+- `GET /users`
+- `GET /users/{id}`
+
+**Culture Objects Service**
+- `POST /culture-objects`
+- `GET /culture-objects`
+- `GET /culture-objects/{id}`
+
+**Subscriptions Service**
+- `POST /subscriptions`
+- `GET /subscriptions`
+- `POST /subscriptions/activate`
+- `POST /subscriptions/track-visit`
+
+**Packages Service**
+- `GET /packages`
+
 
 ## Project Status
-
-Task 1 is the only implemented part so far.
-Additional tasks will be added progressively during the semester, and the README will be updated accordingly.
+Future assignments will further extend the platform, and this README will be updated accordingly.

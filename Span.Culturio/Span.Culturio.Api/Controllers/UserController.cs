@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Span.Culturio.Api.Data;
 using Span.Culturio.Api.DTOs.Users;
@@ -7,6 +8,7 @@ namespace Span.Culturio.Api.Controllers
 {
     [ApiController]
     [Route("users")]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly CulturioDbContext _context;
