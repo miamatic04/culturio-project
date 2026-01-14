@@ -29,6 +29,7 @@ namespace Span.Culturio.Api.Data
                 entity.Property(e => e.Email).HasMaxLength(255).IsRequired();
                 entity.Property(e => e.Username).HasMaxLength(100).IsRequired();
                 entity.Property(e => e.Password).HasMaxLength(255).IsRequired();
+                entity.Property(e => e.Role).HasConversion<string>();
             });
 
             // CultureObject configuration
