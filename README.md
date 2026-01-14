@@ -1,71 +1,140 @@
 # Span.Culturio
 
-Monolithic application for managing cultural institutions, subscription pages, and user visits.
+Culturio platform for managing cultural institutions, users, subscriptions, and visits.
 
 ## Overview
 
-This repository contains the implementation of Task 1 for the course project _ARDPSPM (Span @ FER)_.
-The goal of Task 1 is to build the initial version of the **Culturio platform** as a **monolithic .NET application** that exposes a REST API for cultural institutions, users, packages, and subscriptions.
+This repository contains the implementations of **Task 1** and **Task 2** for the course  
+**Agilni razvoj digitalnih platformi s pomoću mikroservisa (ARDPSPM)**  
+(Span @ FER).
 
-Future tasks will expand the functionality; this README will be updated as each new task is delivered.
+The project is developed incrementally through course assignments:
 
-## Scope of Task 1
+- **Task 1** focuses on building a **monolithic .NET REST API**
+- **Task 2** refactors the monolith into a **microservice-based architecture**
 
-Task 1 includes the following requirements:
+Both implementations are intentionally kept in this repository for reference, comparison, and further development.
 
-1. Create a new solution named **Span.Culturio**.
+---
 
-2. Create a project **Span.Culturio.Api** inside the solution.
+## Repository Structure
+Span.Culturio/
 
-3. Create a SQL database named **Span.Culturio**.
+├── Span.Culturio -> Task 1 – Monolithic application
 
-4. Implement REST API methods exactly as defined in the provided OpenAPI file.
+└── Span.Culturio.Microservices -> Task 2 – Microservice architecture
 
-5. Connect all implemented endpoints to the database for data retrieval and persistence.
 
-6. Implement ```/auth/register``` and ```/auth/login``` as placeholder endpoints returning ```200 OK```.
+---
 
-7. Deliver the solution through a publicly accessible **Azure DevOps repository**.
+## Task 1 – Monolithic Application
 
-## API Summary
+### Assignment Description
 
-The API follows the specification provided in the OpenAPI file and includes:
+The goal of Task 1 is to implement a platform in the form of a **monolithic application** that connects:
 
-### Auth
+- cultural institutions offering visits, and
+- users who purchase monthly subscriptions to access these institutions at reduced prices.
 
-- ```POST /auth/register``` — Placeholder for user registration.
+### Implemented Requirements
 
-- ```POST /auth/login``` — Placeholder for user login.
+- Created a solution named **Span.Culturio**
+- Created an API project **Span.Culturio.Api**
+- Created a SQL database named **Span.Culturio**
+- Implemented REST API methods according to the provided OpenAPI (Swagger) specification
+- Connected all endpoints to the database for data persistence and retrieval
+- Implemented `/auth/login` and `/auth/register` as placeholder endpoints returning `200 OK`
 
-### Users
+### API Summary (Task 1)
 
-- ```GET /users``` — Paginated user listing.
+**Auth**
+- `POST /auth/register` — Placeholder endpoint
+- `POST /auth/login` — Placeholder endpoint
 
-- ```GET /users/{id}``` — Retrieve a single user.
+**Users**
+- `GET /users`
+- `GET /users/{id}`
 
-### Culture Objects
+**Culture Objects**
+- `POST /culture-objects`
+- `GET /culture-objects`
+- `GET /culture-objects/{id}`
 
-- ```POST /culture-objects``` — Create a cultural institution.
+**Subscriptions**
+- `POST /subscriptions`
+- `GET /subscriptions`
+- `POST /subscriptions/activate`
+- `POST /subscriptions/track-visit`
 
-- ```GET /culture-objects``` — Retrieve all institutions.
+**Packages**
+- `GET /packages`
 
-- ```GET /culture-objects/{id}``` — Retrieve details by ID.
+---
 
-### Subscriptions
+## Task 2 – Microservice Architecture
 
-- ```POST /subscriptions``` — Create a subscription.
+### Assignment Description
 
-- ```GET /subscriptions``` — List subscriptions (supports optional userId).
+The goal of Task 2 is to refactor the monolithic application from Task 1 into a **microservice-based system**.
 
-- ```POST /subscriptions/track-visit``` — Record a visit.
+Each microservice represents a separate domain, includes cross-cutting concerns, and is connected to its own database.
 
-- ```POST /subscriptions/activate``` — Activate a subscription.
+### Implemented Requirements
 
-### Packages
+- Created a new solution: **Span.Culturio.Microservices**
+- Split the monolithic application into independent services
+- Implemented:
+  - authentication and authorization,
+  - user role validation,
+  - input validation,
+  - logging
+- Created separate databases and connected them to the appropriate services
+- Reused and reorganized the code from Task 1 into multiple projects
 
-- ```GET /packages``` — Retrieve subscription packages.
+### Implemented Services
+
+- **Span.Culturio.Auth**
+- **Span.Culturio.Users**
+- **Span.Culturio.CultureObjects**
+- **Span.Culturio.Subscriptions**
+- **Span.Culturio.Packages**
+
+### Databases
+
+| Service            | Database                |
+|--------------------|-------------------------|
+| Auth, Users        | Culturio.Users          |
+| CultureObjects     | Culturio.CultureObjects |
+| Subscriptions      | Culturio.Subscriptions  |
+| Packages           | Culturio.Packages       |
+
+### API Summary (Task 2)
+
+The API remains aligned with the OpenAPI specification from Task 1 but is distributed across multiple services.
+
+**Auth Service**
+- `POST /auth/register`
+- `POST /auth/login`
+
+**Users Service**
+- `GET /users`
+- `GET /users/{id}`
+
+**Culture Objects Service**
+- `POST /culture-objects`
+- `GET /culture-objects`
+- `GET /culture-objects/{id}`
+
+**Subscriptions Service**
+- `POST /subscriptions`
+- `GET /subscriptions`
+- `POST /subscriptions/activate`
+- `POST /subscriptions/track-visit`
+
+**Packages Service**
+- `GET /packages`
+
+---
 
 ## Project Status
-
-Task 1 is the only implemented part so far.
-Additional tasks will be added progressively during the semester, and the README will be updated accordingly.
+Future assignments will further extend the platform, and this README will be updated accordingly.
