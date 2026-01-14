@@ -15,17 +15,13 @@ The project is developed incrementally through course assignments:
 
 Both implementations are intentionally kept in this repository for reference, comparison, and further development.
 
----
-
 ## Repository Structure
-Span.Culturio/
+culturio-project/
 
 ├── Span.Culturio -> Task 1 – Monolithic application
 
 └── Span.Culturio.Microservices -> Task 2 – Microservice architecture
 
-
----
 
 ## Task 1 – Monolithic Application
 
@@ -69,7 +65,6 @@ The goal of Task 1 is to implement a platform in the form of a **monolithic appl
 **Packages**
 - `GET /packages`
 
----
 
 ## Task 2 – Microservice Architecture
 
@@ -134,7 +129,6 @@ The API remains aligned with the OpenAPI specification from Task 1 but is distri
 **Packages Service**
 - `GET /packages`
 
----
 
 ## Project Status
 Future assignments will further extend the platform, and this README will be updated accordingly.
