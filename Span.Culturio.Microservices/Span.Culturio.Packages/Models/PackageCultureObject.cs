@@ -8,6 +8,5 @@
         public int AvailableVisits { get; set; }
 
         public Package Package { get; set; } = null!;
-        public CultureObject CultureObject { get; set; } = null!;
     }
 }

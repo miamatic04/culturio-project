@@ -11,9 +11,9 @@ namespace Span.Culturio.Users.Controllers
     [Authorize]
     public class UsersController : ControllerBase
     {
-        private readonly CulturioDbContext _context;
+        private readonly UsersDbContext _context;
 
-        public UsersController(CulturioDbContext context)
+        public UsersController(UsersDbContext context)
         {
             _context = context;
         }

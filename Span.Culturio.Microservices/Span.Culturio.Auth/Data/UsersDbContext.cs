@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Span.Culturio.Auth.Models;
 
 namespace Span.Culturio.Auth.Data
 {

@@ -10,8 +10,5 @@
         public DateTime? ActiveTo { get; set; }
         public string State { get; set; } = "inactive";
         public int RecordedVisits { get; set; }
-
-        public User User { get; set; } = null!;
-        public Package Package { get; set; } = null!;
     }
 }

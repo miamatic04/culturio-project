@@ -9,7 +9,5 @@
         public int ZipCode { get; set; }
         public string City { get; set; } = string.Empty;
         public int AdminUserId { get; set; }
-
-        public ICollection<PackageCultureObject> PackageCultureObjects { get; set; } = new List<PackageCultureObject>();
     }
 }

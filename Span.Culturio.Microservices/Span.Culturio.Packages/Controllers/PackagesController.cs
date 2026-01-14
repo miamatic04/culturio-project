@@ -11,9 +11,9 @@ namespace Span.Culturio.Packages.Controllers
     [Authorize]
     public class PackagesController : ControllerBase
     {
-        private readonly CulturioDbContext _context;
+        private readonly PackagesDbContext _context;
 
-        public PackagesController(CulturioDbContext context)
+        public PackagesController(PackagesDbContext context)
         {
             _context = context;
         }

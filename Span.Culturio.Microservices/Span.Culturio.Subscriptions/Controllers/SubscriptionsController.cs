@@ -12,9 +12,9 @@ namespace Span.Culturio.Subscriptions.Controllers
     [Authorize]
     public class SubscriptionsController : ControllerBase
     {
-        private readonly CulturioDbContext _context;
+        private readonly SubscriptionsDbContext _context;
 
-        public SubscriptionsController(CulturioDbContext context)
+        public SubscriptionsController(SubscriptionsDbContext context)
         {
             _context = context;
         }

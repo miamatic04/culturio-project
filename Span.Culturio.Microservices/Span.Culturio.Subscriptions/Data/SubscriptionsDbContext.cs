@@ -16,7 +16,6 @@ namespace Span.Culturio.Subscriptions.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Name).HasMaxLength(100).IsRequired();
                 entity.Property(e => e.State).HasMaxLength(20).IsRequired();
-                // UserId i PackageId ostaju kao int, ali bez .HasOne navigacija prema drugim modelima
             });
         }
     }

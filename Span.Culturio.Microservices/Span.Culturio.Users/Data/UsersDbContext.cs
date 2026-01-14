@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Span.Culturio.Users.Models;
 
 namespace Span.Culturio.Users.Data
 {

@@ -7,6 +7,5 @@
         public int ValidDays { get; set; }
 
         public ICollection<PackageCultureObject> PackageCultureObjects { get; set; } = new List<PackageCultureObject>();
-        public ICollection<Subscription> Subscriptions { get; set; } = new List<Subscription>();
     }
 }
