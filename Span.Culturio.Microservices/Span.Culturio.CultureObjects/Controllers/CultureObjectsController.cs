@@ -12,9 +12,9 @@ namespace Span.Culturio.CultureObjects.Controllers
     [Authorize]
     public class CultureObjectsController : ControllerBase
     {
-        private readonly CulturioDbContext _context;
+        private readonly CultureObjectsDbContext _context;
 
-        public CultureObjectsController(CulturioDbContext context)
+        public CultureObjectsController(CultureObjectsDbContext context)
         {
             _context = context;
         }

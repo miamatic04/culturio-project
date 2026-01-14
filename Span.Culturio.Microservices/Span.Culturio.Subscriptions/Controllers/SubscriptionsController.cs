@@ -13,15 +13,25 @@ namespace Span.Culturio.Subscriptions.Controllers
     public class SubscriptionsController : ControllerBase
     {
         private readonly SubscriptionsDbContext _context;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILogger<SubscriptionsController> _logger;
 
-        public SubscriptionsController(SubscriptionsDbContext context)
+        public SubscriptionsController(
+            SubscriptionsDbContext context,
+            IHttpClientFactory httpClientFactory,
+            ILogger<SubscriptionsController> logger)
         {
             _context = context;
+            _httpClientFactory = httpClientFactory;
+            _logger = logger;
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateSubscription([FromBody] CreateSubscriptionDto dto)
         {
+            _logger.LogInformation("Creating subscription for User {UserId}, Package {PackageId}",
+                dto.UserId, dto.PackageId);
+
             var subscription = new Subscription
             {
                 UserId = dto.UserId,
@@ -34,12 +44,16 @@ namespace Span.Culturio.Subscriptions.Controllers
             _context.Subscriptions.Add(subscription);
             await _context.SaveChangesAsync();
 
+            _logger.LogInformation("Subscription created with Id {SubscriptionId}", subscription.Id);
+
             return Ok();
         }
 
         [HttpGet]
         public async Task<IActionResult> GetSubscriptions([FromQuery] int? userId)
         {
+            _logger.LogInformation("Getting subscriptions for UserId: {UserId}", userId);
+
             var query = _context.Subscriptions.AsQueryable();
 
             if (userId.HasValue)
@@ -61,26 +75,35 @@ namespace Span.Culturio.Subscriptions.Controllers
                 })
                 .ToListAsync();
 
+            _logger.LogInformation("Returned {Count} subscriptions", subscriptions.Count);
+
             return Ok(subscriptions);
         }
 
         [HttpPost("track-visit")]
         public async Task<IActionResult> TrackVisit([FromBody] TrackVisitDto dto)
         {
+            _logger.LogInformation("Tracking visit for Subscription {SubscriptionId}, CultureObject {CultureObjectId}",
+                dto.SubscriptionId, dto.CultureObjectId);
+
             var subscription = await _context.Subscriptions.FindAsync(dto.SubscriptionId);
 
             if (subscription == null)
             {
+                _logger.LogWarning("Subscription not found: {SubscriptionId}", dto.SubscriptionId);
                 return NotFound("Subscription not found");
             }
 
             if (subscription.State != "active")
             {
+                _logger.LogWarning("Subscription {SubscriptionId} is not active", dto.SubscriptionId);
                 return BadRequest("Subscription is not active");
             }
 
             subscription.RecordedVisits++;
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Visit tracked. Total visits: {RecordedVisits}", subscription.RecordedVisits);
 
             return Ok();
         }
@@ -88,23 +111,63 @@ namespace Span.Culturio.Subscriptions.Controllers
         [HttpPost("activate")]
         public async Task<IActionResult> ActivateSubscription([FromBody] ActivateSubscriptionDto dto)
         {
+            _logger.LogInformation("Activating subscription {SubscriptionId}", dto.SubscriptionId);
+
             var subscription = await _context.Subscriptions
-                .Include(s => s.Package)
                 .FirstOrDefaultAsync(s => s.Id == dto.SubscriptionId);
 
             if (subscription == null)
             {
+                _logger.LogWarning("Subscription not found: {SubscriptionId}", dto.SubscriptionId);
                 return NotFound("Subscription not found");
             }
 
-            // Aktiviraj subscription
-            subscription.State = "active";
-            subscription.ActiveFrom = DateTime.UtcNow;
-            subscription.ActiveTo = DateTime.UtcNow.AddDays(subscription.Package.ValidDays);
+            // Dohvati Package podatke iz Packages servisa
+            var httpClient = _httpClientFactory.CreateClient();
 
-            await _context.SaveChangesAsync();
+            try
+            {
+                // Kopirajte Authorization header iz trenutnog requesta
+                if (Request.Headers.TryGetValue("Authorization", out var authHeader))
+                {
+                    httpClient.DefaultRequestHeaders.Add("Authorization", authHeader.ToString());
+                }
 
-            return Ok();
+                var packageResponse = await httpClient.GetAsync($"https://localhost:7005/packages/{subscription.PackageId}");
+
+                if (!packageResponse.IsSuccessStatusCode)
+                {
+                    _logger.LogError("Failed to fetch package {PackageId} from Packages service", subscription.PackageId);
+                    return BadRequest("Package not found");
+                }
+
+                var package = await packageResponse.Content.ReadFromJsonAsync<PackageDto>();
+
+                // Aktiviraj subscription
+                subscription.State = "active";
+                subscription.ActiveFrom = DateTime.UtcNow;
+                subscription.ActiveTo = DateTime.UtcNow.AddDays(package.ValidDays);
+
+                await _context.SaveChangesAsync();
+
+                _logger.LogInformation("Subscription {SubscriptionId} activated until {ActiveTo}",
+                    subscription.Id, subscription.ActiveTo);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error activating subscription {SubscriptionId}", dto.SubscriptionId);
+                return StatusCode(500, "Error communicating with Packages service");
+            }
         }
+    }
+
+    // DTO za Package response
+    public class PackageDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public int ValidDays { get; set; }
     }
 }
