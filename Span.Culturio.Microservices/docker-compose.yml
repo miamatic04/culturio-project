@@ -1,0 +1,144 @@
+version: '3.8'
+
+services:
+  # SQL Server baza podataka
+  sqlserver:
+    image: mcr.microsoft.com/azure-sql-edge:latest    
+    container_name: culturio-sqlserver
+    user: root
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  # Auth Service
+  auth-service:
+    build:
+      context: .
+      dockerfile: Span.Culturio.Auth/Dockerfile
+    container_name: culturio-auth
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=Culturio.Users;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - JwtSettings__SecretKey=YourSuperSecretKeyThatIsAtLeast32CharactersLong!
+      - JwtSettings__Issuer=Span.Culturio.Auth
+      - JwtSettings__Audience=Span.Culturio.Client
+      - JwtSettings__ExpirationMinutes=60
+    ports:
+      - "5001:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+
+  # Users Service
+  users-service:
+    build:
+      context: .
+      dockerfile: Span.Culturio.Users/Dockerfile
+    container_name: culturio-users
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=Culturio.Users;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - JwtSettings__SecretKey=YourSuperSecretKeyThatIsAtLeast32CharactersLong!
+      - JwtSettings__Issuer=Span.Culturio.Users
+      - JwtSettings__Audience=Span.Culturio.Client
+      - JwtSettings__ExpirationMinutes=60
+    ports:
+      - "5002:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+
+  # CultureObjects Service
+  cultureobjects-service:
+    build:
+      context: .
+      dockerfile: Span.Culturio.CultureObjects/Dockerfile
+    container_name: culturio-cultureobjects
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=Culturio.CultureObjects;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - JwtSettings__SecretKey=YourSuperSecretKeyThatIsAtLeast32CharactersLong!
+      - JwtSettings__Issuer=Span.Culturio.CultureObjects
+      - JwtSettings__Audience=Span.Culturio.Client
+      - JwtSettings__ExpirationMinutes=60
+    ports:
+      - "5003:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+
+  # Subscriptions Service
+  subscriptions-service:
+    build:
+      context: .
+      dockerfile: Span.Culturio.Subscriptions/Dockerfile
+    container_name: culturio-subscriptions
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=Culturio.Subscriptions;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - JwtSettings__SecretKey=YourSuperSecretKeyThatIsAtLeast32CharactersLong!
+      - JwtSettings__Issuer=Span.Culturio.Subscriptions
+      - JwtSettings__Audience=Span.Culturio.Client
+      - JwtSettings__ExpirationMinutes=60
+    ports:
+      - "5004:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+
+  # Packages Service
+  packages-service:
+    build:
+      context: .
+      dockerfile: Span.Culturio.Packages/Dockerfile
+    container_name: culturio-packages
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=Culturio.Packages;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - JwtSettings__SecretKey=YourSuperSecretKeyThatIsAtLeast32CharactersLong!
+      - JwtSettings__Issuer=Span.Culturio.Packages
+      - JwtSettings__Audience=Span.Culturio.Client
+      - JwtSettings__ExpirationMinutes=60
+    ports:
+      - "5005:80"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+
+  # API Gateway
+  api-gateway:
+    build:
+      context: .
+      dockerfile: Span.Culturio.ApiGateway/Dockerfile
+    container_name: culturio-gateway
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "5000:80"
+    depends_on:
+      - auth-service
+      - users-service
+      - cultureobjects-service
+      - subscriptions-service
+      - packages-service
+
+volumes:
+  sqlserver-data:
