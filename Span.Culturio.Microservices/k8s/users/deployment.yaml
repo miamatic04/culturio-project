@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-service
+  namespace: culturio
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: users-service
+  template:
+    metadata:
+      labels:
+        app: users-service
+    spec:
+      containers:
+      - name: users
+        image: culturio-users:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80
+          name: http
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_URLS
+          value: "http://+:80"
+        - name: ConnectionStrings__DefaultConnection
+          value: "Server=sqlserver;Database=Culturio.Users;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;MultipleActiveResultSets=true"
+        - name: JwtSettings__SecretKey
+          value: "YourSuperSecretKeyThatIsAtLeast32CharactersLong!"
+        - name: JwtSettings__Issuer
+          value: "Span.Culturio.Users"
+        - name: JwtSettings__Audience
+          value: "Span.Culturio.Client"
+        - name: JwtSettings__ExpirationMinutes
+          value: "60"

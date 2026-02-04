@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: subscriptions-service
+  namespace: culturio
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: subscriptions-service
+  template:
+    metadata:
+      labels:
+        app: subscriptions-service
+    spec:
+      containers:
+      - name: subscriptions
+        image: culturio-subscriptions:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 80
+          name: http
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        - name: ASPNETCORE_URLS
+          value: "http://+:80"
+        - name: ConnectionStrings__DefaultConnection
+          value: "Server=sqlserver;Database=Culturio.Subscriptions;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;MultipleActiveResultSets=true"
+        - name: JwtSettings__SecretKey
+          value: "YourSuperSecretKeyThatIsAtLeast32CharactersLong!"
+        - name: JwtSettings__Issuer
+          value: "Span.Culturio.Subscriptions"
+        - name: JwtSettings__Audience
+          value: "Span.Culturio.Client"
+        - name: JwtSettings__ExpirationMinutes
+          value: "60"
