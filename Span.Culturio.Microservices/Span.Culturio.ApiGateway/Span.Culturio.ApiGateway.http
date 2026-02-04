@@ -1,0 +1,6 @@
+@Span.Culturio.ApiGateway_HostAddress = http://localhost:5069
+
+GET {{Span.Culturio.ApiGateway_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
