@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # SQL Server baza podataka
+  # SQL Server (Azure SQL Edge for ARM/Mac/Windows compatibility)
   sqlserver:
     image: mcr.microsoft.com/azure-sql-edge:latest    
     container_name: culturio-sqlserver
@@ -9,18 +9,11 @@ services:
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=YourStrong@Passw0rd
-      - MSSQL_PID=Express
     ports:
       - "1433:1433"
     volumes:
       - sqlserver-data:/var/opt/mssql
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
-    healthcheck:
-      test: /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q "SELECT 1" || exit 1
-      interval: 10s
-      timeout: 3s
-      retries: 10
-      start_period: 10s
 
   # Auth Service
   auth-service:
@@ -39,8 +32,7 @@ services:
     ports:
       - "5001:80"
     depends_on:
-      sqlserver:
-        condition: service_healthy
+      - sqlserver
 
   # Users Service
   users-service:
@@ -59,8 +51,7 @@ services:
     ports:
       - "5002:80"
     depends_on:
-      sqlserver:
-        condition: service_healthy
+      - sqlserver
 
   # CultureObjects Service
   cultureobjects-service:
@@ -79,8 +70,7 @@ services:
     ports:
       - "5003:80"
     depends_on:
-      sqlserver:
-        condition: service_healthy
+      - sqlserver
 
   # Subscriptions Service
   subscriptions-service:
@@ -99,8 +89,7 @@ services:
     ports:
       - "5004:80"
     depends_on:
-      sqlserver:
-        condition: service_healthy
+      - sqlserver
 
   # Packages Service
   packages-service:
@@ -119,8 +108,7 @@ services:
     ports:
       - "5005:80"
     depends_on:
-      sqlserver:
-        condition: service_healthy
+      - sqlserver
 
   # API Gateway
   api-gateway:

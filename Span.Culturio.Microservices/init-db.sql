@@ -1,3 +1,6 @@
+USE master;
+GO
+
 -- Kreiranje baza podataka
 IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'Culturio.Users')
 BEGIN

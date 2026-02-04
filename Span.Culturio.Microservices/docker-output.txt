@@ -1,0 +1,8 @@
+CONTAINER ID   IMAGE                                              COMMAND                  CREATED         STATUS         PORTS                                         NAMES
+c91736b3ae87   spanculturiomicroservices-api-gateway              "dotnet Span.Culturi…"   3 minutes ago   Up 3 minutes   0.0.0.0:5000->80/tcp, [::]:5000->80/tcp       culturio-gateway
+da207a14024d   spanculturiomicroservices-users-service            "dotnet Span.Culturi…"   3 minutes ago   Up 3 minutes   0.0.0.0:5002->80/tcp, [::]:5002->80/tcp       culturio-users
+f4a963a237e4   spanculturiomicroservices-subscriptions-service    "dotnet Span.Culturi…"   3 minutes ago   Up 3 minutes   0.0.0.0:5004->80/tcp, [::]:5004->80/tcp       culturio-subscriptions
+3aae2ceed530   spanculturiomicroservices-auth-service             "dotnet Span.Culturi…"   3 minutes ago   Up 3 minutes   0.0.0.0:5001->80/tcp, [::]:5001->80/tcp       culturio-auth
+6eaa0879dd64   spanculturiomicroservices-packages-service         "dotnet Span.Culturi…"   3 minutes ago   Up 3 minutes   0.0.0.0:5005->80/tcp, [::]:5005->80/tcp       culturio-packages
+13988cf83f4b   spanculturiomicroservices-cultureobjects-service   "dotnet Span.Culturi…"   3 minutes ago   Up 3 minutes   0.0.0.0:5003->80/tcp, [::]:5003->80/tcp       culturio-cultureobjects
+fcffb91b856f   mcr.microsoft.com/azure-sql-edge:latest            "/opt/mssql/bin/perm…"   3 minutes ago   Up 3 minutes   0.0.0.0:1433->1433/tcp, [::]:1433->1433/tcp   culturio-sqlserver
